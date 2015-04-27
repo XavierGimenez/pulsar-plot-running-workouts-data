@@ -7,8 +7,10 @@ define('workouts-chart',
 		canvas,
 		sketch,
 		xscale, yscale,
-		xdomain, ydomain;
-
+		yScaleRange = 100,
+		size = {w:960, h:600},
+		xdomain, ydomain,
+		margin = {top:30, bottom:30, left:200, right: 200};
 
 
 	module.create = function()
@@ -76,11 +78,11 @@ define('workouts-chart',
 
 		xscale = d3.scale.linear()
 			.domain(distanceExtent)
-			.range([0,300]);
+			.range([0,size.w - margin.right - margin.left]);
 
 		yscale = d3.scale.linear()
 			.domain(elevationExtent)
-			.range([0,100]);
+			.range([0,yScaleRange]);
 	}
 
 
@@ -89,60 +91,51 @@ define('workouts-chart',
 	{
 		canvas = document.getElementById("canvas_chart");
 		sketch = new Processing.Sketch();
-		sketch.use3Dcontext = true;
 		sketch.attachFunction = function(processing)
 		{
 						var tex;
-						  var rotx = Math.PI/6;
-						  var roty = Math.PI/14;
 
 						  processing.setup = function() {
-						    processing.size(640, 360, processing.P3D);
-						    processing.fill(255);						    
+						    processing.size(size.w, size.h, processing.P2D);
+						    processing.fill(204, 102, 0);						    
+						    //processing.noFill();
 						  };
 
 						  processing.draw = function() {
-						    processing.background(255, 255, 255);						    
-						  	processing.translate(processing.width/2.0, 40 + (processing.height/3.0), -150);
- 							processing.rotateY(roty);
-							
+						    processing.background(0, 0, 0);						    
+ 							processing.translate(margin.left, margin.top);
+							console.log("workouts length ", workouts.length);
 							workouts.forEach(function(workout, workout_index)
-							{
-								processing.pushMatrix();
-								processing.rotateY(  ((2*processing.PI)/(workouts.length))* workout_index  );
+							{								
+								processing.translate(0, (size.h - margin.top - margin.bottom)/(workouts.length*2));
+								processing.beginShape();
 								workout[0].segments[0].forEach(function(point, index)
 								{
-									processing.stroke(30,30, 30, 150);
-									if(index == 0)
-										processing.line(
-											100 + xscale(0),
-											yscale.range()[1] - yscale(0),
-											0,
-											100 + xscale(0),
-											yscale.range()[1] - yscale(point.e),
-											0
+									processing.stroke(255,255, 255, 150);
+
+									//add some noise before the workout
+									/*for(i=0; i<100; i++)
+									{
+										processing.curveVertex(										
+											(margin.left/2) + (i*2), 
+											processing.random(0,10)
 										);
-									else
-										processing.line(											
-											100 + xscale(workout[0].segments[0][index-1].distance),
-											yscale.range()[1] - yscale(workout[0].segments[0][index-1].e),
-											0,
-											100 + xscale(point.distance), 
-											yscale.range()[1] - yscale(point.e), 
-											0
-										);
+									}*/
+
+									if(index == 0 || index == workout[0].segments[0].length - 1)
+									processing.curveVertex(										
+										xscale(point.distance), 
+										yscale.range()[1] - yscale(point.e)
+									)
+									
+									processing.curveVertex(										
+										xscale(point.distance), 
+										yscale.range()[1] - yscale(point.e)
+									);
 								});
 
-								processing.stroke(0,0, 200, 100);
-								processing.line(
-									100 + xscale(0),
-									yscale.range()[1],
-									0,
-									100 + xscale.range()[1],
-									yscale.range()[1],
-									0
-									);
-								processing.popMatrix();
+								processing.endShape();
+
 							});
 						  }						  
 		}
