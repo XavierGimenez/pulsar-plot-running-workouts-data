@@ -76,7 +76,7 @@ define('workouts-chart',
 
 		xscale = d3.scale.linear()
 			.domain(distanceExtent)
-			.range([0,300]);
+			.range([0,450]);
 
 		yscale = d3.scale.linear()
 			.domain(elevationExtent)
@@ -110,9 +110,33 @@ define('workouts-chart',
 							{
 								processing.pushMatrix();
 								processing.rotateY(  ((2*processing.PI)/(workouts.length))* workout_index  );
+								processing.beginShape();
+								processing.stroke(30,30, 30, 150);
 								workout[0].segments[0].forEach(function(point, index)
 								{
-									processing.stroke(30,30, 30, 150);
+									if(index == 0)
+										processing.line(
+											100 + xscale(0),
+											yscale.range()[1] - yscale(0),
+											0,
+											100 + xscale(0),
+											yscale.range()[1] - yscale(point.e),
+											0
+										);
+
+									if(index == 0 || index == workout[0].segments[0].length - 1)
+										processing.curveVertex(
+											100 + xscale(point.distance), 
+											yscale.range()[1] - yscale(point.e), 
+											0
+										);
+
+									processing.curveVertex(
+											100 + xscale(point.distance), 
+											yscale.range()[1] - yscale(point.e), 
+											0
+									);
+									/*
 									if(index == 0)
 										processing.line(
 											100 + xscale(0),
@@ -131,17 +155,18 @@ define('workouts-chart',
 											yscale.range()[1] - yscale(point.e), 
 											0
 										);
+									*/
 								});
-
-								processing.stroke(0,0, 200, 100);
-								processing.line(
-									100 + xscale(0),
-									yscale.range()[1],
-									0,
-									100 + xscale.range()[1],
-									yscale.range()[1],
-									0
-									);
+								processing.endShape();
+								// processing.stroke(0,0, 200, 100);
+								// processing.line(
+								// 	100 + xscale(0),
+								// 	yscale.range()[1],
+								// 	0,
+								// 	100 + xscale.range()[1],
+								// 	yscale.range()[1],
+								// 	0
+								// 	);
 								processing.popMatrix();
 							});
 						  }						  
