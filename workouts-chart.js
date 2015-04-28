@@ -1,5 +1,5 @@
 define('workouts-chart',
-	['d3','processing', 'turf', 'queue'], function(d3, processing, turf, queue) {
+	['d3','processing', 'turf', 'queue', 'lodash'], function(d3, processing, turf, queue, _) {
 
 	var module = {},
 		workouts,
@@ -7,26 +7,32 @@ define('workouts-chart',
 		canvas,
 		sketch,
 		xscale, yscale,
-		yScaleRange = 200,
-		size = {w:960, h:600},
+		yScaleRange = 50,
+		size = {w:960, h:700},
 		xdomain, ydomain,
 		margin = {top:30, bottom:30, left:200, right: 200},
 		noisePoints = 50,
 		noiseGap = (margin.left/2)/noisePoints,
-		noiseBefore = [],
-		noiseAfter = [];
+		noiseBefore = [];
 
 
 	module.create = function()
-	{		
+	{	
+		//some workouts are out of the 'average' (trail races per example). Remove them
+		//from the sampling just for aesthetic purposes
+		var removedWorkouts2012 = [0, 1, 3, 10];
+		var removedWorkouts2013 = [19, 25, 26, 28, 29];
+		var removedWorkouts2014 = [0, 1, 7, 11, 24, 25];
 		queue()
 			.defer(d3.json, "data/workouts2012.json")
 			.defer(d3.json, "data/workouts2013.json")
-			.defer(d3.json, "data/workouts2014.json")
+			 .defer(d3.json, "data/workouts2014.json")
 			.awaitAll(function(error, results)
 			{
-				console.log("results, ", results);
-				workouts = results[0].concat(results[1].concat(results[2]));
+				_.pullAt(results[0], removedWorkouts2012);
+				_.pullAt(results[1], removedWorkouts2013);
+				_.pullAt(results[2], removedWorkouts2014);
+				workouts = _.flatten(results);
 				prepareData(workouts);
 				render();
 			});
@@ -93,34 +99,23 @@ define('workouts-chart',
 
 
 
-	function generateNoise(position, processing)
+	function generateNoise(processing)
 	{
 		var noise = [];
 	    for(var i=0; i<noisePoints; i++)
 		{
-			if(position == 0)
-				noise.push(
-					{	x : -(margin.left/2) + (i*noiseGap), 
-						y : yscale.range()[1] - processing.random(1,2)
-					});
-			else
-				noise.push(
-					{	x : (i*noiseGap), 
-						y : yscale.range()[1] - processing.random(1,2)
-					});
+			noise.push(
+				{	x : -(margin.left/2) + (i*noiseGap), 
+					y : yscale.range()[1] - processing.random(1,2)
+				});			
 
 			//curve made by curveVertexs has duplicated the first and last point, so proceed:
 			//these duplicated points have 0 altitude
-			if(position == 0 && i == 0)
+			if(i == 0)
 				noise = 
 					[{	x:noise[noise.length-1].x, 
 						y:yscale.range()[1] 
-					}].concat(noise);
-			else if (position == 1 && i == noisePoints-1)
-				noise.push( 
-					{	x: noise[noise.length-1].x, 
-						y: yscale.range()[1] 
-					});
+					}].concat(noise);			
 		}
 		return noise;
 	}
@@ -135,34 +130,36 @@ define('workouts-chart',
 			//prepare noise points before the route points
 			workouts.forEach(function(workout, workout_index)
 			{
-				
-				noiseBefore.push([].concat(generateNoise(0, processing)));
-				noiseAfter.push([].concat(generateNoise(1, processing)));
+				noiseBefore.push([].concat(generateNoise(processing)));
 			});
 				
 			  processing.setup = function() 
 			  {
 			    processing.size(size.w, size.h, processing.P2D);
-			    processing.frameRate(1);
-			    processing.fill(0, 0, 0, 200);
+			    processing.frameRate(1);	//no need to animate anything
+			    processing.noLoop();	//no need to animate anything
+			    processing.fill(0, 0, 0, 255);
 			    //processing.fill(204, 102, 0);
 			    //processing.noFill();
-			    // processing.noLoop();
+			    
 			  };
 
 			  processing.draw = function() 
-			  {			  
+			  {			
+			  console.log("draw");
+
 			    processing.background(0, 0, 0);						    
-				processing.translate(margin.left, margin.top);
+			    //processing.scale(0.75, 0.75);
+				processing.translate(margin.left, 0);
 				processing.stroke(255,255, 255, 255);		
 
 				workouts.forEach(function(workout, workout_index)
 				{	
 					var lastDistance;
 
-				if(workout_index < 139)							
+				if(workout_index < 200)							
 				{
-					processing.translate(0, (size.h - margin.top - margin.bottom)/(workouts.length*2));
+					processing.translate(0, (size.h - margin.top - margin.bottom)/(workouts.length));
 					processing.beginShape();
 					
 					//draw noise before the workout
@@ -170,7 +167,7 @@ define('workouts-chart',
 					{
 						processing.curveVertex(point.x, point.y);
 					});
-
+					// processing.translate((workout_index), 0);
 					//draw workout
 					workout[0].segments[0].forEach(function(point, index)
 					{
@@ -184,14 +181,10 @@ define('workouts-chart',
 					});
 					
 					processing.curveTightness(5);
-					// draw noise after the workout
-					noiseAfter[workout_index].forEach(function(point)
+					for(var x = lastDistance; x<xscale.range()[1] + (margin.left/2); x=x+4)
 					{
-						processing.vertex(lastDistance + point.x, point.y);
-
-						processing.curveTightness(0);
-					});
-
+						processing.vertex(20 + x, yscale.range()[1] - processing.random(1,2));
+					}
 					processing.endShape();
 				}
 				});

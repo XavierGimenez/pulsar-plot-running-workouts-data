@@ -6,7 +6,8 @@ require.config({
     'turf'				    : 'turf/turf.min',
     'stats'           : 'stats.js/build/stats.min',
     'queue'           : 'queue-async/queue.min',
-    'workouts-chart'	: '../workouts-chart'
+    'workouts-chart'	: '../workouts-chart',
+    'lodash'          : 'lodash/lodash.min'
   }
 });
 
