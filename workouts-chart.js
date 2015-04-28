@@ -22,7 +22,7 @@ define('workouts-chart',
 				
 				workouts = json;
 				prepareData(workouts);
-				draw();
+				render();
 			});
 	}
 
@@ -87,47 +87,57 @@ define('workouts-chart',
 
 
 
-	function draw()
-	{
-		canvas = document.getElementById("canvas_chart");
-		sketch = new Processing.Sketch();
-		sketch.attachFunction = function(processing)
+	function render()
+	{		
+		function sketch(processing)
 		{
 						var tex;
+						var noisePoints = 25;
+						var noiseGap = (margin.left/2)/noisePoints;
 
 						  processing.setup = function() {
 						    processing.size(size.w, size.h, processing.P2D);
-						    processing.fill(204, 102, 0);						    
-						    //processing.noFill();
+						    processing.frameRate(1);
+						    //processing.fill(204, 102, 0);
+						    processing.noFill();
 						  };
 
 						  processing.draw = function() {
 						    processing.background(0, 0, 0);						    
  							processing.translate(margin.left, margin.top);
-							console.log("workouts length ", workouts.length);
+							processing.stroke(255,255, 255, 255);		
 							workouts.forEach(function(workout, workout_index)
 							{								
 								processing.translate(0, (size.h - margin.top - margin.bottom)/(workouts.length*2));
 								processing.beginShape();
+
+
+								//add some noise before the workout
+									for(var i=0; i<noisePoints; i++)
+									{
+										if(i == 0)
+											processing.curveVertex(										
+											-(margin.left/2) + (i*noiseGap), 
+											yscale.range()[1] - processing.random(0,2)
+										);
+
+										processing.curveVertex(										
+											-(margin.left/2) + (i*noiseGap), 
+											yscale.range()[1] - processing.random(0,2)
+										);
+									}
+
+
 								workout[0].segments[0].forEach(function(point, index)
 								{
-									processing.stroke(255,255, 255, 150);
-
-									//add some noise before the workout
-									/*for(i=0; i<100; i++)
-									{
-										processing.curveVertex(										
-											(margin.left/2) + (i*2), 
-											processing.random(0,10)
-										);
-									}*/
+																
 
 									if(index == 0 || index == workout[0].segments[0].length - 1)
 									processing.curveVertex(										
 										xscale(point.distance), 
 										yscale.range()[1] - yscale(point.e)
 									)
-									
+
 									processing.curveVertex(										
 										xscale(point.distance), 
 										yscale.range()[1] - yscale(point.e)
@@ -139,6 +149,9 @@ define('workouts-chart',
 							});
 						  }						  
 		}
+
+		canvas = document.getElementById("canvas_chart");
+		//sketch = new Processing.Sketch();
 
 		var p = new Processing(canvas, sketch);
 	}
