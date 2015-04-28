@@ -4,7 +4,8 @@ require.config({
     'd3'  				    : 'd3/d3.min',
     'processing'		  : 'Processing.js/processing.min',
     'turf'				    : 'turf/turf.min',
-    'stats'         : 'stats.js/build/stats.min',
+    'stats'           : 'stats.js/build/stats.min',
+    'queue'           : 'queue-async/queue.min',
     'workouts-chart'	: '../workouts-chart'
   }
 });
@@ -13,6 +14,7 @@ require(
   ['d3', 'processing', 'workouts-chart', 'turf', 'stats'],
   function(d3, processing, workoutschart, stats)
   {
+    /*
     var _stats = new Stats();
     _stats.setMode(0); // 0: fps, 1: ms
 
@@ -30,5 +32,8 @@ require(
         requestAnimationFrame( update );
     };
     requestAnimationFrame( update );
+    */
+
+    workoutschart.create();
   }
 );
