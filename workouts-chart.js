@@ -10,7 +10,7 @@ define('workouts-chart',
 		yScaleRange = 50,
 		size = {w:960, h:700},
 		xdomain, ydomain,
-		margin = {top:30, bottom:30, left:200, right: 200},
+		margin = {top:30, bottom:30, left:240, right: 240},
 		noisePoints = 50,
 		noiseGap = (margin.left/2)/noisePoints,
 		noiseBefore = [];
@@ -29,6 +29,7 @@ define('workouts-chart',
 			 .defer(d3.json, "data/workouts2014.json")
 			.awaitAll(function(error, results)
 			{
+				//remove indicated workouts and join the rest
 				_.pullAt(results[0], removedWorkouts2012);
 				_.pullAt(results[1], removedWorkouts2013);
 				_.pullAt(results[2], removedWorkouts2014);
@@ -149,16 +150,14 @@ define('workouts-chart',
 			  console.log("draw");
 
 			    processing.background(0, 0, 0);						    
-			    //processing.scale(0.75, 0.75);
-				processing.translate(margin.left, 0);
+			    processing.scale(0.75, 0.75);
+				processing.translate(margin.left*1.5, 0);
 				processing.stroke(255,255, 255, 255);		
 
 				workouts.forEach(function(workout, workout_index)
 				{	
 					var lastDistance;
 
-				if(workout_index < 200)							
-				{
 					processing.translate(0, (size.h - margin.top - margin.bottom)/(workouts.length));
 					processing.beginShape();
 					
@@ -186,7 +185,6 @@ define('workouts-chart',
 						processing.vertex(20 + x, yscale.range()[1] - processing.random(1,2));
 					}
 					processing.endShape();
-				}
 				});
 			  }						  
 		}
