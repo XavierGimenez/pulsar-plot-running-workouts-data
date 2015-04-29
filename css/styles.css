@@ -9,6 +9,26 @@ body {
 h1 {
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 300;
-	color: black;
+	color: white;
 	text-align: center;
+}
+
+canvas {
+	margin-left: 32px; /* processing render is scaled by a factor so just center it here*/
+}
+
+.header 
+{
+	font-family: 'Raleway', sans-serif;
+	font-weight: 100;
+	font-size: 76px;	
+	margin: 0 0 -14px 0;
+
+}
+
+.subheader
+{
+	font-family: Arial;
+	letter-spacing: 6px;
+	margin: 0;
 }

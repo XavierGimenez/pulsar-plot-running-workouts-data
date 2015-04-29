@@ -7,13 +7,14 @@ define('workouts-chart',
 		canvas,
 		sketch,
 		xscale, yscale,
-		yScaleRange = 50,
-		size = {w:960, h:700},
+		yScaleRange = 55,
+		size = {w:900, h:600},
 		xdomain, ydomain,
 		margin = {top:30, bottom:30, left:240, right: 240},
 		noisePoints = 50,
 		noiseGap = (margin.left/2)/noisePoints,
-		noiseBefore = [];
+		noiseBefore = [],
+		pscale = 0.65;
 
 
 	module.create = function()
@@ -99,6 +100,10 @@ define('workouts-chart',
 	}
 
 
+	function getRandomNoise(processing)
+	{
+		return processing.random(0,3);
+	}
 
 	function generateNoise(processing)
 	{
@@ -107,7 +112,7 @@ define('workouts-chart',
 		{
 			noise.push(
 				{	x : -(margin.left/2) + (i*noiseGap), 
-					y : yscale.range()[1] - processing.random(1,2)
+					y : yscale.range()[1] - getRandomNoise(processing)
 				});			
 
 			//curve made by curveVertexs has duplicated the first and last point, so proceed:
@@ -147,10 +152,8 @@ define('workouts-chart',
 
 			  processing.draw = function() 
 			  {			
-			  console.log("draw");
-
 			    processing.background(0, 0, 0);						    
-			    processing.scale(0.75, 0.75);
+			    processing.scale(pscale, pscale);
 				processing.translate(margin.left*1.5, 0);
 				processing.stroke(255,255, 255, 255);		
 
@@ -158,7 +161,7 @@ define('workouts-chart',
 				{	
 					var lastDistance;
 
-					processing.translate(0, (size.h - margin.top - margin.bottom)/(workouts.length));
+					processing.translate(0, (size.h + margin.top + margin.bottom)/(workouts.length-8));
 					processing.beginShape();
 					
 					//draw noise before the workout
@@ -166,7 +169,7 @@ define('workouts-chart',
 					{
 						processing.curveVertex(point.x, point.y);
 					});
-					// processing.translate((workout_index), 0);
+
 					//draw workout
 					workout[0].segments[0].forEach(function(point, index)
 					{
@@ -182,7 +185,7 @@ define('workouts-chart',
 					processing.curveTightness(5);
 					for(var x = lastDistance; x<xscale.range()[1] + (margin.left/2); x=x+4)
 					{
-						processing.vertex(20 + x, yscale.range()[1] - processing.random(1,2));
+						processing.vertex(20 + x, yscale.range()[1] - getRandomNoise(processing));
 					}
 					processing.endShape();
 				});
