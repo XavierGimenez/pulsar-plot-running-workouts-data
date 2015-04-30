@@ -8,13 +8,16 @@ define('workouts-chart',
 		sketch,
 		xscale, yscale,
 		yScaleRange = 55,
-		size = {w:900, h:600},
+		size = {w:900, h:500},
 		xdomain, ydomain,
 		margin = {top:30, bottom:30, left:240, right: 240},
 		noisePoints = 50,
 		noiseGap = (margin.left/2)/noisePoints,
 		noiseBefore = [],
-		pscale = 0.65;
+		pscale = 0.65,
+		totalDistance = 0,
+		totalHeightPositive = 0,
+		totalHeightNegative = 0;
 
 
 	module.create = function()
@@ -65,9 +68,19 @@ define('workouts-chart',
 		//calculate distance for each point and overall distance for each workout
 		workouts.forEach(function(workout)
 		{
-			workout["distance"] = 0;
+			workout["distance"] = workout["e_positive"] = workout["e_negative"] = 0;
+			var currentElevation = +workout[0].segments[0][0]['e'];
 			workout[0].segments[0].forEach(function(point, index)
 			{
+				point['e'] = +point['e'];
+
+				if(point['e'] > currentElevation)
+					workout["e_positive"] += (point['e'] - currentElevation);
+				else if(point['e'] < currentElevation)
+					workout["e_negative"] += (currentElevation - point['e']);
+
+				currentElevation = point['e'];
+
 				point["distance"] = (index == 0)? 
 					0 : 
 					turf.distance(
@@ -76,10 +89,23 @@ define('workouts-chart',
 							[	parseFloat(workout[0].segments[0][index-1]['lon']), 
 								parseFloat(workout[0].segments[0][index-1]['lat'])
 							])
-					) + workout[0].segments[0][index-1].distance;
+					) + workout[0].segments[0][index-1].distance;	
 			});
 			workout["distance"] = workout[0].segments[0][workout[0].segments[0].length - 1].distance;
 		});
+
+		totalDistance = d3.sum(workouts, function(workout)
+			{
+				return workout["distance"];
+			});
+		totalHeightPositive = d3.sum(workouts, function(workout)
+			{
+				return workout["e_positive"];
+			});
+		totalHeightNegative = d3.sum(workouts, function(workout)
+			{
+				return workout["e_negative"];
+			});
 
 		//get max distance from workouts
 		distanceExtent = [
@@ -130,6 +156,13 @@ define('workouts-chart',
 
 	function render()
 	{	
+		var separator = "|"
+			
+		d3.select("#totals1").text(workouts.length + " running workouts ");
+		d3.select("#totals2").text("Distance " + Math.round(totalDistance) + " km");
+		d3.select("#totalsElevation1").text("Vertical gain " + (Math.round(totalHeightPositive)/1000).toFixed(3) + "m");
+		d3.select("#totalsElevation2").text((Math.round(totalHeightNegative)/1000).toFixed(3) + "m" + " Vertical drop ");
+
 		function sketch(processing)
 		{
 
@@ -161,7 +194,7 @@ define('workouts-chart',
 				{	
 					var lastDistance;
 
-					processing.translate(0, (size.h + margin.top + margin.bottom)/(workouts.length-8));
+					processing.translate(0, (size.h + margin.top + margin.bottom)/(workouts.length-16));
 					processing.beginShape();
 					
 					//draw noise before the workout

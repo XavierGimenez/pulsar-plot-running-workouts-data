@@ -13,10 +13,23 @@ h1 {
 	text-align: center;
 }
 
-canvas {
-	margin-left: 32px; /* processing render is scaled by a factor so just center it here*/
+
+.summary {
+	color: grey;
+	font-family: 'Arial', 'Raleway', sans-serif;
+	font-weight: 100;
+	letter-spacing: 2px;
+	font-size: 12px;
+	margin-bottom: 10px;
 }
 
+canvas {
+	margin-left: 85px; /* processing render is scaled by a factor so just center it here*/
+}
+
+.sep {
+	border-right: 1px solid grey;
+}
 .header 
 {
 	font-family: 'Raleway', sans-serif;
@@ -29,6 +42,17 @@ canvas {
 .subheader
 {
 	font-family: Arial;
+	font-size:30px;
 	letter-spacing: 6px;
-	margin: 0;
+	margin: 0 0 90px 0;	
+}
+
+.menu {
+	position: fixed;
+	top: 15px;
+	left: 15px;
+	color: white;
+	text-decoration: underline;
+	font-size: 12px;
+	font-family: Arial;
 }
