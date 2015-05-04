@@ -1,0 +1,17 @@
+{
+  "name": "workouts-viz",
+  "version": "0.0.0",
+  "authors": [
+    "XavierGimenez <xavi@xavigimenez.net>"
+  ],
+  "description": "Data Visualization of trail running workouts, pulsar plot",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

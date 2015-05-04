@@ -2,7 +2,7 @@
 	width: 960px;
 }
 body {
-	margin-top: 50px;
+	margin-top: 15px;
 	background-color: black;
 }
 
@@ -15,7 +15,7 @@ h1 {
 
 
 .summary {
-	color: grey;
+	color: #555;
 	font-family: 'Arial', 'Raleway', sans-serif;
 	font-weight: 100;
 	letter-spacing: 2px;
@@ -55,4 +55,66 @@ canvas {
 	text-decoration: underline;
 	font-size: 12px;
 	font-family: Arial;
+}
+
+.menu a {
+	color: white;
+}
+
+#links
+{
+	position: fixed;
+	top: 40px;
+	left: 15px;
+}
+
+.popup {
+  color:grey;
+  display: block;
+  position: fixed;
+  padding: 10px;
+  width: 420px;
+  left: 5px; /*50%;
+  margin-left: -255px;*/
+  height: 650px;
+  top: 60px;
+  /*background: #FFF;*/
+  background-color: rgba(0,0,0,0.9);
+  z-index: 20;
+  opacity: 0;
+}
+
+.explanation {
+	width: 100%;
+	height: 100%;
+	/*height: 475px;
+	overflow: scroll;
+	overflow-y: scroll;
+	overflow-x: hidden;*/
+	font-size: 12px;
+}
+
+.explanation img {
+	float: right;
+	width: 200px;
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  float: left;
+  width: 16px;
+  height: 16px;
+  padding-left: 3px;
+}
+
+#links img {
+  float: left;
+  margin: 0 24px 0 0;
 }

@@ -2,9 +2,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Workouts example</title>
+  <title>Unknow pleasures. Data Visualization with running workouts</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Emulating the pulsar plot in Joy Division's Unkown Pleasures album with data coming from running workouts"/>
+  <meta name="keywords" content="data visualization, stacked, pulsar, plot, joy division, cover, albume, music" />
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/styles.css">
   <link href='http://fonts.googleapis.com/css?family=Raleway:400,100' rel='stylesheet' type='text/css'>
@@ -12,9 +14,45 @@
 </head>
 <body>
 
-  <div class="menu">
-    What's this?
+  <div class="menu" id="what">
+    <a href="#">What's this?</a>
   </div>
+  <div id="links">
+    <ul>
+      <li><a href="http://twitter.com/home/?status=My small tribute to the #dataviz in Joy's Division Unknown Pleasures cover album. Same chart different data - http://www.xavigimenez.net/blog/2015/04/mapping-3-years-of-running-workouts/" title="Tweet this" target="_blank">
+        <img src="image/twitter.png" alt="Tweet this" width="16" height="16">
+      </a></li>
+      <li><a href="http://www.facebook.com/sharer.php?u=http://www.xavigimenez.net/blog/2015/04/mapping-3-years-of-running-workouts/&amp;t=My small tribute to the #dataviz in Joy's Division Unknown Pleasures cover album. Same chart different data" title="Share on Facebook" target="_blank">
+        <img src="image/facebook.png" alt="Share on Facebook" width="16" height="16">
+      </a></li>
+      <li><a href="http://www.linkedin.com/shareArticle?mini=true&amp;title=My small tribute to the #dataviz in Joy's Division Unknown Pleasures cover album. Same chart different data&amp;url=http://www.xavigimenez.net/blog/2015/04/mapping-3-years-of-running-workouts/" title="Share on LinkedIn" target="_blank">
+        <img src="image/linkedin.png" alt="Share on Linkedin" width="16" height="16">
+      </a></li>      
+    </ul>
+  </div>
+  
+  <div class="popup" id="what_popup">
+    <div class="explanation">
+      <p>
+      <img src='image/pulsar_detail.jpg'> 
+      If you talk about Data Visualization and album covers in the music culture there is a cover that is
+      one of if not the most representative of these two fields. We talk about the cover for Joy Division’s Unknown Pleasures album, who became an iconic image to represent the band. 
+      </p>
+      <p>
+      This album cover has an interesting history behind. The graphic is a data display and his creator <a href="http://en.wikipedia.org/wiki/Peter_Saville_(graphic_designer)" target="_blank">Peter Saville</a>,
+      describes it as a "comparative path demonstration of frequency from a signal of a pulsar. Each horizontal line, reaching a series of peaks close to the middle of the graph, is observed data from a this pulsar, and there are several of them stacked together. Saville goes on, "What you’re seeing is a comparative chart of the frequency and the accuracy of this signal."
+      </p>
+
+      <p>
+        I was fascinated about this story when I discovered it through this excellent <a href="http://blogs.scientificamerican.com/sa-visual/2015/02/18/pop-culture-pulsar-origin-story-of-joy-divisions-unknown-pleasures-album-cover-video/" target="_blank">post on Scientific American blog</a>, so I wanted to experiment with this pulsar visualization, creating one by my own with data more related to my daily life. I quickly found a metaphorical correlation between a pulsar and me: In fact like a pulsar which emits signals periodically due to several phenomenons, I change my normal activity when my sedentary life stops and I start my trail running workouts.
+      </p>
+      <p>
+        <img src="image/workout.jpg"></img>
+        Here every path is the workout itself, plotting elevation changes and total distance. Stacking all the workout paths then the trail activity emerges even showing some patterns, as the average distance and the shape generated from elevation changes  of all the trail rides. Adding some signal noise before each track helps to emulate the original pulsar plot and also is a way to communicate the idea of the change in the individual activity. 
+      </p>
+    </div>
+  </div>
+
 	<div class="container">
 		<canvas id="canvas_chart" width="800" height="800"></canvas>
     <h1 class="subheader">UNKNOWN PLEASURES</h1>
@@ -29,8 +67,7 @@
     <div class="row">
       <div class="summary col-md-6 text-right sep">2012-08-31</div>
       <div class="summary col-md-6 text-left">2014-12-31</div>
-    </div>
-    
+    </div>    
 	</div>
   
 </body>

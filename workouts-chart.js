@@ -17,7 +17,8 @@ define('workouts-chart',
 		pscale = 0.65,
 		totalDistance = 0,
 		totalHeightPositive = 0,
-		totalHeightNegative = 0;
+		totalHeightNegative = 0,
+		what_visible = 0;
 
 
 	module.create = function()
@@ -156,12 +157,33 @@ define('workouts-chart',
 
 	function render()
 	{	
-		var separator = "|"
-			
+		//add summary data
+		var separator = "|"			
 		d3.select("#totals1").text(workouts.length + " running workouts ");
 		d3.select("#totals2").text("Distance " + Math.round(totalDistance) + " km");
 		d3.select("#totalsElevation1").text("Vertical gain " + (Math.round(totalHeightPositive)/1000).toFixed(3) + "m");
 		d3.select("#totalsElevation2").text((Math.round(totalHeightNegative)/1000).toFixed(3) + "m" + " Vertical drop ");
+
+		d3.select("#what").on('click', function()
+		{
+			console.log("what");
+			d3.select("#what_popup")
+				.transition()
+				.style("opacity", 100)
+				.each("end", function ()
+				{
+					what_visible = 1;
+				});				
+		});		
+
+		d3.select("body").on('click', function()
+		{
+			if(what_visible == 0)
+				return;
+			d3.select("#what_popup").transition().style("opacity", 0);
+			//d3.select("body").on('click', null);
+			what_visible = 0;
+		});
 
 		function sketch(processing)
 		{
@@ -177,10 +199,7 @@ define('workouts-chart',
 			    processing.size(size.w, size.h, processing.P2D);
 			    processing.frameRate(1);	//no need to animate anything
 			    processing.noLoop();	//no need to animate anything
-			    processing.fill(0, 0, 0, 255);
-			    //processing.fill(204, 102, 0);
-			    //processing.noFill();
-			    
+			    processing.fill(0, 0, 0, 255);			    
 			  };
 
 			  processing.draw = function() 
